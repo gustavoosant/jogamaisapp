@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:patoteiros/screens/homePage_screen.dart';
 import 'package:patoteiros/screens/login_screen.dart';
+
 
 
 void main() {
@@ -14,11 +16,7 @@ class JogaApp extends StatelessWidget {
     return MaterialApp(
       title: 'Joga+',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
-      ),
-      home: const LoginScreen(),
+      home: const HomepageScreen(),
     );
   }
 }
