@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:patoteiros/screens/homePage_screen.dart';
-import 'package:patoteiros/screens/login_screen.dart';
+import 'package:jogamais/meu_aplicativo.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:jogamais/services/auth_service.dart';
+import 'configs/firebase_options.dart';
+import 'package:provider/provider.dart';
 
 
-
-void main() {
-  runApp(const JogaApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthService())
+      ],
+        child: MeuAplicativo()
+    ),
+  );
 }
 
-class JogaApp extends StatelessWidget {
-  const JogaApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Joga+',
-      debugShowCheckedModeBanner: false,
-      home: const HomepageScreen(),
-    );
-  }
-}

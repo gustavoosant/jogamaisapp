@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:patoteiros/screens/login_screen.dart';
+import 'package:jogamais/screens/login_screen.dart';
 
 
 

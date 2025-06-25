@@ -1,49 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:patoteiros/widgets/card_Evento_widget.dart';
+import 'package:jogamais/widgets/card_Evento_widget.dart';
 import '../widgets/card_BotaoMini_widget.dart';
 import '../widgets/card_Botao_widget.dart';
+import '../widgets/customAppBar_widget.dart';
+import '../widgets/customBottomBar_widget.dart';
+import '../widgets/screenTitle_widget.dart';
+import 'perfil_screen.dart';
 
-class HomepageScreen extends StatelessWidget {
-  const HomepageScreen({super.key});
+class HomePageScreen extends StatefulWidget {
+  const HomePageScreen({super.key});
+
+  @override
+  State<HomePageScreen> createState() => _HomePageScreenState();
+}
+
+class _HomePageScreenState extends State<HomePageScreen> {
+  int paginaAtual = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF182B5C),
-        title: const Text('Joga+', style: TextStyle(color: Colors.white)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none, color: Colors.white),
-            onPressed: () {},
-            constraints: const BoxConstraints(
-                minWidth: 48,
-                minHeight: 48
-            ),
-            padding: EdgeInsets.zero,
-          ),
-          IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white),
-            onPressed: () {},
-            constraints: const BoxConstraints(
-                minWidth: 48,
-                minHeight: 48
-            ),
-            padding: EdgeInsets.zero,
-          ),
-        ],
-      ),
+      appBar: const CustomAppBar(),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text(
-            'Próximos Eventos',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF151B34),
-            ),
-          ),
+          ScreenTitle(title: 'Próximos Eventos'),
           const SizedBox(height: 16),
           buildEventoCard(
             nomePatota: 'Patota 1',
@@ -89,66 +70,23 @@ class HomepageScreen extends StatelessWidget {
           const SizedBox(height: 100), // Espaço para a navbar
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: const Color(0xFF182B5C),
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8,
-        child: SizedBox(
-          height: 65,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.home, color: Colors.white),
-                onPressed: () {
-                  // ação para ir à Home
-                },
-                constraints: const BoxConstraints(
-                  minWidth: 48,
-                  minHeight: 48
-                ),
-                padding: EdgeInsets.zero,
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.calendar_month_outlined,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  // ação para ir à Agenda
-                },
-                constraints: const BoxConstraints(
-                    minWidth: 48,
-                    minHeight: 48
-                ),
-                padding: EdgeInsets.zero,
-              ),
-              const SizedBox(width: 48), // espaço para o FAB
-              IconButton(
-                icon: const Icon(Icons.chat_outlined, color: Colors.white),
-                onPressed: () {
-                  // ação para ir ao Chat
-                },
-                constraints: const BoxConstraints(
-                    minWidth: 48,
-                    minHeight: 48
-                ),
-                padding: EdgeInsets.zero,
-              ),
-              IconButton(
-                icon: const Icon(Icons.person, color: Colors.white),
-                onPressed: () {
-                  // ação para ir ao Perfil
-                },
-                constraints: const BoxConstraints(
-                    minWidth: 48,
-                    minHeight: 48
-                ),
-                padding: EdgeInsets.zero,
-              ),
-            ],
-          ),
-        ),
+      bottomNavigationBar: CustomBottomBar(
+        currentIndex: paginaAtual,
+        onTap: (index) async {
+          setState(() {
+            paginaAtual = index;
+          });
+
+          if (index == 3) {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PerfilScreen()),
+            );
+            setState(() {
+              paginaAtual = 0;
+            });
+          }
+        },
       ),
 
       floatingActionButton: FloatingActionButton(
