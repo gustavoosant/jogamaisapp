@@ -1,3 +1,3 @@
 # Joga+
 
-A new Flutter project
+Aplicativo de Gestão de Patotas
