@@ -3,7 +3,7 @@ import 'package:jogamais/screens/login_screen.dart';
 import 'package:jogamais/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
-import '../screens/homePage_screen.dart';
+import '../screens/home_page_screen.dart';
 
 class AuthCheck extends StatefulWidget {
   const AuthCheck({super.key});
@@ -17,11 +17,9 @@ class _AuthCheckState extends State<AuthCheck> {
   Widget build(BuildContext context) {
     AuthService auth = Provider.of<AuthService>(context);
 
-    print("auth");
-    print(auth.usuario);
-    if(auth.isLoading) {
+    if (auth.isLoading) {
       return loading();
-    } else if(auth.usuario == null) {
+    } else if (auth.usuario == null) {
       return LoginScreen();
     } else {
       return HomePageScreen();
@@ -29,10 +27,6 @@ class _AuthCheckState extends State<AuthCheck> {
   }
 
   loading() {
-    return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      )
-    );
+    return Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

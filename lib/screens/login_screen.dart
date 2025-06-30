@@ -18,6 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
   late String titulo;
   late String actionButton;
   late String toogleTextButton;
+  late String toogleText;
+  bool loading = false;
 
   @override
   void initState() {
@@ -25,14 +27,13 @@ class _LoginScreenState extends State<LoginScreen> {
     setFormAction(true);
   }
 
-
   setFormAction(bool acao) {
     setState(() {
       isLogin = acao;
       if (isLogin) {
         titulo = 'Login';
         actionButton = 'Login';
-        toogleTextButton = 'Não possui uma conta? Criar conta';
+        toogleTextButton = 'Criar conta';
       } else {
         titulo = 'Crie sua conta';
         actionButton = 'Cadastrar';
@@ -42,18 +43,26 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   login() async {
+    setState(() => loading = true);
     try {
       await context.read<AuthService>().login(email.text, senha.text);
     } on AuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message), backgroundColor: Colors.red),
+      );
     }
   }
 
-  registrar() async{
+  registrar() async {
+    setState(() => loading = true);
     try {
       await context.read<AuthService>().registrar(email.text, senha.text);
     } on AuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message), backgroundColor: Colors.red),
+      );
     }
   }
 
@@ -66,7 +75,6 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: [
             const SizedBox(height: 50),
-            // Logo
             Center(
               child: Image.asset(
                 'assets/images/logo.png',
@@ -89,9 +97,12 @@ class _LoginScreenState extends State<LoginScreen> {
             Expanded(
               child: Container(
                 width: double.infinity,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(40)),
+                  borderRadius:
+                      isLogin
+                          ? BorderRadius.only(topLeft: Radius.circular(40))
+                          : BorderRadius.only(topRight: Radius.circular(40)),
                 ),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
@@ -136,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   keyboardType: TextInputType.emailAddress,
                                   validator: (value) {
                                     if (value!.isEmpty) {
-                                      return 'Informe o email corretamente';
+                                      return 'Informe seu email';
                                     }
                                     return null;
                                   },
@@ -160,19 +171,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                   },
                                 ),
                                 const SizedBox(height: 8),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: TextButton(
-                                    onPressed: () {},
-                                    child: const Text(
-                                      'Esqueceu a senha?',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Color(0xFF626262),
+                                if (isLogin)
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: TextButton(
+                                      onPressed: () {},
+                                      child: const Text(
+                                        'Esqueceu a senha?',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Color(0xFF626262),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
                                 const SizedBox(height: 16),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
@@ -192,13 +204,25 @@ class _LoginScreenState extends State<LoginScreen> {
                                       }
                                     }
                                   },
-                                  child: Text(
-                                    actionButton,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Color(0xFFFFFFFF),
-                                    ),
-                                  ),
+                                  child:
+                                      (loading)
+                                          ? Padding(
+                                            padding: EdgeInsets.all(8),
+                                            child: SizedBox(
+                                              width: 18,
+                                              height: 18,
+                                              child: CircularProgressIndicator(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          )
+                                          : Text(
+                                            actionButton,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color: Color(0xFFFFFFFF),
+                                            ),
+                                          ),
                                 ),
                               ],
                             ),

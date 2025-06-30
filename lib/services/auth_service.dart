@@ -46,7 +46,7 @@ class AuthService extends ChangeNotifier {
       await _auth.signInWithEmailAndPassword(email: email, password: senha);
       _getUser();
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found' || e.code == 'invalid-credential') {
+      if (e.code == 'user-not-found') {
         throw AuthException('Email não encontrado. Cadastre-se.');
       } else if (e.code == 'wrong-password') {
         throw AuthException('Senha incorreta. Tente novamente');
@@ -57,5 +57,29 @@ class AuthService extends ChangeNotifier {
   logout() async {
     await _auth.signOut();
     _getUser();
+  }
+
+  resetarSenha(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      _getUser();
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(e.message as String);
+    }
+  }
+
+  deletarConta(String email, String senha) async {
+    try {
+      AuthCredential credencial = EmailAuthProvider.credential(
+        email: email,
+        password: senha,
+      );
+      _getUser();
+      await usuario!.reauthenticateWithCredential(credencial);
+      await usuario!.delete();
+      await _auth.signOut();
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(e.message as String);
+    }
   }
 }

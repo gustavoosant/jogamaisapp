@@ -7,10 +7,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: const Color(0xFF182B5C),
-      title: const Text(
-        'Joga+',
-        style: TextStyle(color: Colors.white),
-      ),
+      title: const Text('Joga+', style: TextStyle(color: Colors.white)),
       actions: [
         IconButton(
           icon: const Icon(Icons.notifications_none, color: Colors.white),
@@ -22,14 +19,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         IconButton(
           icon: const Icon(Icons.menu, color: Colors.white),
-          onPressed: () {
-            // ação para menu
-          },
+          onPressed: () => {Scaffold.of(context).openEndDrawer()},
           constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
           padding: EdgeInsets.zero,
         ),
       ],
-      automaticallyImplyLeading: false, // Não mostra botão de voltar automaticamente
+      automaticallyImplyLeading: false,
       elevation: 0,
     );
   }

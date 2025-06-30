@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jogamais/screens/login_screen.dart';
 import 'package:jogamais/widgets/auth_check.dart';
 
 class MeuAplicativo extends StatelessWidget {
