@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:jogamais/repositories/patota_repository.dart';
 import 'package:jogamais/repositories/perfil_repository.dart';
-import 'package:jogamais/screens/perfil_screen.dart';
 import 'package:jogamais/widgets/custom_appbar_widget.dart';
-import 'package:jogamais/widgets/custom_bottombar_widget.dart';
 import 'package:jogamais/widgets/screen_title_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -15,8 +13,63 @@ class NovaPatotaScreen extends StatefulWidget {
 }
 
 class _NovaPatotaScreen extends State<NovaPatotaScreen> {
+  final TextEditingController _patotaController = TextEditingController();
   int paginaAtual = 0;
   bool loading = false;
+
+  _salvarPatotaInfo(organizador) async {
+    final nomePatota = _patotaController.text;
+
+    setState(() => loading = true);
+
+    if (nomePatota.isNotEmpty && organizador.isNotEmpty) {
+      try {
+        final patotaInfos = Provider.of<PatotaRepository>(
+          context,
+          listen: false,
+        );
+        await patotaInfos.savePatotaInfos(nomePatota, organizador);
+
+        setState(() => loading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Patota salva com sucesso!'),
+            backgroundColor: Color(0XFF1C5718),
+          ),
+        );
+      } catch (e) {
+        setState(() => loading = false);
+
+        String mensagemErro;
+
+        if (e.toString().contains('Usuário não autenticado')) {
+          mensagemErro = 'Erro de autenticação. Faça login novamente.';
+        } else if (e.toString().contains('Esta patota já está cadastrada')) {
+          mensagemErro = 'Você já possui uma patota criada com este nome!';
+        } else if (e.toString().contains('Erro ao salvar patota')) {
+          mensagemErro = 'Erro interno. Tente novamente.';
+        } else {
+          mensagemErro = 'Erro inesperado: $e';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(mensagemErro),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } else {
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preencha todos os campos!'),
+          backgroundColor: Color(0xFF8F3509),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +102,12 @@ class _NovaPatotaScreen extends State<NovaPatotaScreen> {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  nomeUsuario!,
-                  style: TextStyle(fontSize: 14, color: Colors.black),
+                  (nomeUsuario != null) ? nomeUsuario : 'Usuario',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF151B34),
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],
@@ -58,10 +115,13 @@ class _NovaPatotaScreen extends State<NovaPatotaScreen> {
 
           SizedBox(height: 24),
           TextFormField(
+            controller: _patotaController,
             decoration: InputDecoration(
               labelText: 'Nome da Patota',
               hintText: 'Digite o nome da Patota',
-              labelStyle: TextStyle(color: Color(0xFF151B34), fontSize: 14),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              labelStyle: TextStyle(color: Color(0xFF151B34), fontSize: 20),
+              hintStyle: TextStyle(color: Color(0xFF151B34), fontSize: 14),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4),
                 borderSide: BorderSide(color: Color(0xFF151B34)),
@@ -81,7 +141,7 @@ class _NovaPatotaScreen extends State<NovaPatotaScreen> {
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () => _salvarPatotaInfo(nomeUsuario),
               child:
                   (loading)
                       ? Padding(
@@ -130,82 +190,11 @@ class _NovaPatotaScreen extends State<NovaPatotaScreen> {
                   ],
                 ),
               ),
-              onPressed: null,
+              onPressed: () {},
             ),
           ),
         ],
       ),
-      bottomNavigationBar: CustomBottomBar(
-        currentIndex: paginaAtual,
-        onTap: (index) async {
-          setState(() {
-            paginaAtual = index;
-          });
-
-          if (index == 3) {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const PerfilScreen()),
-            );
-            setState(() {
-              paginaAtual = 0;
-            });
-          }
-        },
-      ),
-
-      floatingActionButton: SpeedDial(
-        icon: Icons.add_circle_outline,
-        activeIcon: Icons.close_outlined,
-        backgroundColor: const Color(0xFF151B34),
-        foregroundColor: Colors.white,
-        activeBackgroundColor: Colors.red,
-        activeForegroundColor: Colors.white,
-        buttonSize: Size(60.0, 60.0),
-        overlayColor: Colors.black,
-        overlayOpacity: 0.3,
-        elevation: 8.0,
-        shape: CircleBorder(),
-        children: [
-          SpeedDialChild(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            backgroundColor: const Color(0xFFB0B1C6),
-            foregroundColor: Colors.white,
-            label: 'Criar novo Evento',
-            labelStyle: TextStyle(
-              color: Color(0xFF151B34),
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            ),
-            labelBackgroundColor: const Color(0xFFB0B1C6),
-            onTap:
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const NovaPatotaScreen(),
-                  ),
-                ),
-          ),
-          SpeedDialChild(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            backgroundColor: const Color(0xFFB0B1C6),
-            foregroundColor: Colors.white,
-            label: 'Criar nova Patota',
-            labelStyle: TextStyle(
-              color: Color(0xFF151B34),
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            ),
-            labelBackgroundColor: const Color(0xFFB0B1C6),
-            onTap: () => print('Mensagem'),
-          ),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

@@ -4,7 +4,6 @@ import 'package:jogamais/screens/nova_patota_screen.dart';
 import 'package:jogamais/screens/novo_evento_screen.dart';
 
 class CustomFab extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     return SpeedDial(

@@ -51,6 +51,7 @@ class _NovoEventoScreen extends State<NovoEventoScreen> {
               TextFormField(
                 decoration: inputDecoration.copyWith(
                   hintText: 'Digite o nome da Patota',
+                  hintStyle: hintStyle,
                 ),
               ),
               const SizedBox(height: 24),
@@ -80,6 +81,7 @@ class _NovoEventoScreen extends State<NovoEventoScreen> {
                         TextFormField(
                           decoration: inputDecoration.copyWith(
                             hintText: '00:00',
+                            hintStyle: hintStyle,
                           ),
                         ),
                       ],
@@ -90,36 +92,44 @@ class _NovoEventoScreen extends State<NovoEventoScreen> {
               const SizedBox(height: 24),
               Text("Local", style: labelStyle),
               const SizedBox(height: 16),
-              Text("Nome da rua", style: labelStyle),
+              Text("Nome da rua", style: subLabelStyle),
               const SizedBox(height: 8),
               TextFormField(
                 decoration: inputDecoration.copyWith(
                   hintText: "Digite o nome da rua",
+                  hintStyle: hintStyle,
                 ),
               ),
               const SizedBox(height: 16),
-              Text("Número", style: labelStyle),
+              Text("Número", style: subLabelStyle),
               const SizedBox(height: 8),
               TextFormField(
                 decoration: inputDecoration.copyWith(
                   hintText: "Digite o número",
+                  hintStyle: hintStyle,
                 ),
               ),
               const SizedBox(height: 16),
-              Text("CEP", style: labelStyle),
+              Text("CEP", style: subLabelStyle),
               const SizedBox(height: 8),
               TextFormField(
-                decoration: inputDecoration.copyWith(hintText: "Digite o CEP"),
+                decoration: inputDecoration.copyWith(
+                  hintText: "Digite o CEP",
+                  hintStyle: hintStyle,
+                ),
               ),
               const SizedBox(height: 32),
               Center(
                 child: SizedBox(
                   width: double.infinity,
+                  height: 50,
                   child: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF172348),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
                     child: Text(
                       "Salvar",
@@ -138,7 +148,7 @@ class _NovoEventoScreen extends State<NovoEventoScreen> {
   }
 
   final inputDecoration = InputDecoration(
-    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide(color: Color(0xFF151B34)),
@@ -146,9 +156,15 @@ class _NovoEventoScreen extends State<NovoEventoScreen> {
   );
 
   final labelStyle = TextStyle(
-    color: Colors.black,
-    fontSize: 14,
+    color: Color(0xFF151B34),
+    fontSize: 17,
     fontWeight: FontWeight.w500,
+  );
+
+  final subLabelStyle = TextStyle(
+    color: Color(0xFF151B34),
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
   );
 
   final hintStyle = TextStyle(color: Color(0xFFB1B1B1), fontSize: 14);

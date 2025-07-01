@@ -60,7 +60,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
         String mensagemErro;
 
-        // Tratar erros específicos da função savePerfilInfos
         if (e.toString().contains('Usuário não autenticado')) {
           mensagemErro = 'Erro de autenticação. Faça login novamente.';
         } else if (e.toString().contains(
