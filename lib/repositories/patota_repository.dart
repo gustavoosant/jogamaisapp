@@ -6,17 +6,49 @@ import 'package:jogamais/services/auth_service.dart';
 class PatotaRepository extends ChangeNotifier {
   late FirebaseFirestore db;
   late AuthService auth;
+  final List<String> _listaPatotas = [];
+
+  List<String> get patotas => _listaPatotas;
 
   PatotaRepository({required this.auth}) {
     _startRepository();
+    if (auth.usuario != null) {
+      readPatotas();
+    }
   }
 
   _startRepository() async {
     await _startFirestore();
+    await readPatotas();
   }
 
   _startFirestore() {
     db = DBFirestore.get();
+  }
+
+  Future<void> readPatotas() async {
+    if (auth.usuario != null) {
+      try {
+        final patotasUsuario =
+            await db
+                .collection('patotasUsuario/${auth.usuario!.uid}/patota')
+                .get();
+
+        _listaPatotas.clear();
+        print('Total de documentos: ${patotasUsuario.docs.length}');
+        for (var doc in patotasUsuario.docs) {
+          final infosPatota = doc.data();
+          print('Documento: ${doc.id}, dados: $infosPatota');
+          if (infosPatota['patota'] != null) {
+            _listaPatotas.add(infosPatota['patota']);
+          }
+        }
+        print('Lista final: $_listaPatotas');
+        notifyListeners();
+      } catch (e) {
+        print('Erro ao ler patotas: $e');
+      }
+    }
   }
 
   Future<void> savePatotaInfos(String patota, String organizador) async {
@@ -43,6 +75,8 @@ class PatotaRepository extends ChangeNotifier {
             'organizador': organizador,
             'dataCriacao': FieldValue.serverTimestamp(),
           });
+
+      readPatotas();
     } catch (e) {
       print('error');
       print(e);

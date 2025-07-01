@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:jogamais/repositories/patota_repository.dart';
 import 'package:jogamais/screens/drawer_screen.dart';
 import 'package:jogamais/widgets/custom_appbar_widget.dart';
 import 'package:jogamais/widgets/screen_title_widget.dart';
+import 'package:provider/provider.dart';
 
 class NovoEventoScreen extends StatefulWidget {
   const NovoEventoScreen({super.key});
@@ -11,139 +13,178 @@ class NovoEventoScreen extends StatefulWidget {
 }
 
 class _NovoEventoScreen extends State<NovoEventoScreen> {
-  final List<String> patotas = ['Patota A', 'Patota B'];
+  String? patotaSelecionada;
   final _formKey = GlobalKey<FormState>();
   int paginaAtual = 0;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PatotaRepository>().readPatotas();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: const CustomAppBar(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ScreenTitle(title: 'Novo Evento', showBack: true),
-              const SizedBox(height: 24),
-              Text("Selecione a patota", style: labelStyle),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                decoration: inputDecoration,
-                items:
-                    patotas
-                        .map(
-                          (patota) => DropdownMenuItem(
-                            value: patota,
-                            child: Text(patota),
-                          ),
-                        )
-                        .toList(),
-                onChanged: (value) {},
-                hint: Text('Nome da patota', style: hintStyle),
-              ),
-              const SizedBox(height: 24),
-              Text("Descrição do Evento", style: labelStyle),
-              const SizedBox(height: 8),
-              TextFormField(
-                decoration: inputDecoration.copyWith(
-                  hintText: 'Digite o nome da Patota',
-                  hintStyle: hintStyle,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
+    return Consumer<PatotaRepository>(
+      builder: (context, patotaRepository, child) {
+        final patotas = patotaRepository.patotas;
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: const CustomAppBar(),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Data", style: labelStyle),
-                        const SizedBox(height: 8),
-                        ElevatedButton(
-                          onPressed: () {},
-                          style: outlinedButtonStyle,
-                          child: Text("Data", style: hintStyle),
-                        ),
-                      ],
-                    ),
+                  ScreenTitle(title: 'Novo Evento', showBack: true),
+                  const SizedBox(height: 24),
+                  Text("Selecione a patota", style: labelStyle),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    decoration: inputDecoration,
+                    value: patotaSelecionada,
+                    items:
+                        patotas.isEmpty
+                            ? [
+                              DropdownMenuItem(
+                                value: null,
+                                child: Text(
+                                  'Nenhuma patota criada',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ),
+                            ]
+                            : patotas
+                                .map(
+                                  (patota) => DropdownMenuItem(
+                                    value: patota,
+                                    child: Text(patota),
+                                  ),
+                                )
+                                .toList(),
+                    onChanged:
+                        patotas.isEmpty
+                            ? null
+                            : (value) {
+                              setState(() {
+                                patotaSelecionada = value;
+                              });
+                            },
+                    hint: Text('Nome da patota', style: hintStyle),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Horário", style: labelStyle),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          decoration: inputDecoration.copyWith(
-                            hintText: '00:00',
-                            hintStyle: hintStyle,
+                  (patotas.isEmpty)
+                      ? SizedBox.shrink()
+                      : Column(
+                        children: [
+                          Text("Descrição do Evento", style: labelStyle),
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            decoration: inputDecoration.copyWith(
+                              hintText: 'Digite o nome da Patota',
+                              hintStyle: hintStyle,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Data", style: labelStyle),
+                                    const SizedBox(height: 8),
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      style: outlinedButtonStyle,
+                                      child: Text("Data", style: hintStyle),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Horário", style: labelStyle),
+                                    const SizedBox(height: 8),
+                                    TextFormField(
+                                      decoration: inputDecoration.copyWith(
+                                        hintText: '00:00',
+                                        hintStyle: hintStyle,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          Text("Local", style: labelStyle),
+                          const SizedBox(height: 16),
+                          Text("Nome da rua", style: subLabelStyle),
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            decoration: inputDecoration.copyWith(
+                              hintText: "Digite o nome da rua",
+                              hintStyle: hintStyle,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text("Número", style: subLabelStyle),
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            decoration: inputDecoration.copyWith(
+                              hintText: "Digite o número",
+                              hintStyle: hintStyle,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text("CEP", style: subLabelStyle),
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            decoration: inputDecoration.copyWith(
+                              hintText: "Digite o CEP",
+                              hintStyle: hintStyle,
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          Center(
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFF172348),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                child: Text(
+                                  "Salvar",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 80),
+                        ],
+                      ),
                 ],
               ),
-              const SizedBox(height: 24),
-              Text("Local", style: labelStyle),
-              const SizedBox(height: 16),
-              Text("Nome da rua", style: subLabelStyle),
-              const SizedBox(height: 8),
-              TextFormField(
-                decoration: inputDecoration.copyWith(
-                  hintText: "Digite o nome da rua",
-                  hintStyle: hintStyle,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text("Número", style: subLabelStyle),
-              const SizedBox(height: 8),
-              TextFormField(
-                decoration: inputDecoration.copyWith(
-                  hintText: "Digite o número",
-                  hintStyle: hintStyle,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text("CEP", style: subLabelStyle),
-              const SizedBox(height: 8),
-              TextFormField(
-                decoration: inputDecoration.copyWith(
-                  hintText: "Digite o CEP",
-                  hintStyle: hintStyle,
-                ),
-              ),
-              const SizedBox(height: 32),
-              Center(
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF172348),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    child: Text(
-                      "Salvar",
-                      style: TextStyle(fontSize: 22, color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 80),
-            ],
+            ),
           ),
-        ),
-      ),
-      endDrawer: const TelaMenuDrawer(),
+          endDrawer: const TelaMenuDrawer(),
+        );
+      },
     );
   }
 
