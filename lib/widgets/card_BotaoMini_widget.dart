@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 Widget buildBotaoMiniCard({
@@ -19,7 +17,7 @@ Widget buildBotaoMiniCard({
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(icon, size: 32),
-            const SizedBox(height: 24),
+            const SizedBox(height: 22),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

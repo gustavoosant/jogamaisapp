@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 Widget buildEventoCard({
   required String nomePatota,
   required String organizador,
-  required String descricao,
-  required String data,
-  required String horario,
-  required String local,
-  required int confirmados,
+  required String descEvento,
+  required String dataEvento,
+  required String horarioEvento,
+  required String localEvento,
 }) {
   return Card(
     elevation: 4,
@@ -21,24 +20,62 @@ Widget buildEventoCard({
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(nomePatota,
-                  style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF151B34))),
-              Text('$confirmados Confirmados'),
+              Text(
+                nomePatota,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF151B34),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 1),
-          Text('Organizador: $organizador'),
-          Text(descricao, style: const TextStyle(fontWeight: FontWeight.w600)),
-          const SizedBox(height: 12),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Dia: $data'),
-              Text('Horário: $horario'),
-              Text('Local: $local'),
+              Text(
+                'Organizador: ',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              Text('$organizador'),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            descEvento,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF151B34),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text('Dia: ', style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text('$dataEvento'),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Horário: ',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  Text('$horarioEvento'),
+                ],
+              ),
+
+              Row(
+                children: [
+                  Text(
+                    'Local: ',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  Text('$localEvento'),
+                ],
+              ),
             ],
           ),
         ],

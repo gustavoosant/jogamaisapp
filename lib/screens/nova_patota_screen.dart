@@ -190,7 +190,7 @@ class _NovaPatotaScreen extends State<NovaPatotaScreen> {
                   ],
                 ),
               ),
-              onPressed: () {},
+              onPressed: null,
             ),
           ),
         ],

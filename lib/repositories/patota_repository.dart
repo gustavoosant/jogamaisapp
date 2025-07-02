@@ -35,18 +35,16 @@ class PatotaRepository extends ChangeNotifier {
                 .get();
 
         _listaPatotas.clear();
-        print('Total de documentos: ${patotasUsuario.docs.length}');
         for (var doc in patotasUsuario.docs) {
           final infosPatota = doc.data();
-          print('Documento: ${doc.id}, dados: $infosPatota');
           if (infosPatota['patota'] != null) {
             _listaPatotas.add(infosPatota['patota']);
           }
         }
-        print('Lista final: $_listaPatotas');
         notifyListeners();
       } catch (e) {
         print('Erro ao ler patotas: $e');
+        throw Exception('Erro ao ler patotas: $e');
       }
     }
   }
